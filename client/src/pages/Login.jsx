@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox"; // ✅ for scopes
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -43,9 +44,13 @@ export default function Login() {
     setToken(null);
 
     try {
+      console.log("Requesting token with:", form);
       const response = await fetch("http://localhost:8080/token", {
+
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "Authorization": "Basic " + btoa("demo-client:demo-secret")
+         },
         body: JSON.stringify({
           subject: form.subject,
           audience: form.audience,
@@ -57,6 +62,7 @@ export default function Login() {
       if (!response.ok) {
         throw new Error("Failed to get token");
       }
+      
 
       const data = await response.json();
       setToken(data.access_token);
@@ -164,6 +170,20 @@ export default function Login() {
                 <strong>Access Token:</strong> {token}
               </p>
             )}
+
+            {/* <Link to="/validate">
+            <Button
+              type="submit"
+              className={cn(
+                "w-full",
+                loading && "opacity-70 cursor-not-allowed"
+              )}
+              disabled={loading}
+            >
+              {loading ? "..." : "click here to validate Token"}
+            </Button>
+            </Link> */}
+
           </CardFooter>
         </form>
       </Card>
