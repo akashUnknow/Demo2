@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox"; // ✅ for scopes
+import { Checkbox } from "@/components/ui/checkbox"; 
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
@@ -18,7 +18,7 @@ export default function Login() {
   const [form, setForm] = useState({
     subject: "",
     audience: "",
-    scopes: [], // ✅ array now
+    scopes: [],
     expiresIn: 600,
   });
 
@@ -74,7 +74,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="flex items-center justify-center bg-gray-50 w-full h-full">
       <Card className="w-[400px] shadow-lg">
         <CardHeader>
           <CardTitle className="text-center">Token based Auth</CardTitle>

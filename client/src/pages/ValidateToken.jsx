@@ -4,12 +4,34 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { useNavigate } from "react-router-dom"
 
 export default function ValidateToken() {
   const [token, setToken] = useState("")
   const [audience, setAudience] = useState("my-service")
   const [result, setResult] = useState(null)
+  const [PublicKeyresult, setPublicKeyResult] = useState(null)
   const [loading, setLoading] = useState(false)
+    const [PublicKeyloading, setPublicKeyLoading] = useState(false)
+      const navigate = useNavigate();
+
+  const handleGetPublicKey = async () => {
+    setPublicKeyLoading(true)
+    try {
+      const res = await fetch("http://localhost:8080/api/public-key", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+
+      const data = await res.text()
+       navigate("/public-key", { state: { publicKey: data } });
+    } catch (err) {
+      console.error(err)
+      setPublicKeyResult({ error: "Something went wrong" })
+    } finally {
+      setPublicKeyLoading(false)
+    }
+  }
 
   const handleValidate = async () => {
     if (!token) return alert("Please enter a token")
@@ -33,7 +55,7 @@ export default function ValidateToken() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex items-center justify-center bg-gray-50 w-full h-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Token Validator</CardTitle>
@@ -61,6 +83,10 @@ export default function ValidateToken() {
         <CardFooter className="flex flex-col gap-4">
           <Button className="w-full" onClick={handleValidate} disabled={loading}>
             {loading ? "Validating..." : "Validate Token"}
+          </Button>
+
+           <Button className="w-full" onClick={handleGetPublicKey} disabled={PublicKeyloading}>
+            {PublicKeyloading ? "Getting public key..." : "Get Public Key"}
           </Button>
 
           {result && (
