@@ -20,29 +20,39 @@ export default function DynamicJwkToPem() {
     setJwk({ ...jwk, [e.target.id]: e.target.value });
   };
 
-  const handleConvert = async () => {
-    setLoading(true);
-    setPem("");
-    setError("");
-    try {
-      const res = await fetch("https://didactic-capybara-r46g55rq6w7gh57xq-8080.app.github.dev/convert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jwk),
-      });
-      const data = await res.json();
-      if (data.pem) {
-        setPem(data.pem);
-      } else {
-        setError(data.error || "Failed to convert JWK to PEM");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
+const handleConvert = async () => {
+  setLoading(true);
+  setPem("");
+  setError("");
+  try {
+    // console.log("JWK being sent for conversion:", jwk);
+    const cleanN = jwk.n
+      .replace(/-----BEGIN PUBLIC KEY-----/g, "")
+      .replace(/-----END PUBLIC KEY-----/g, "")
+      .replace(/\s+/g, "");
+
+    const payload = { ...jwk, n: cleanN };
+
+    const res = await fetch("http://localhost:8000/convert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    console.log("Response status:", data);
+    if (data.pem) {
+      setPem(data.pem);
+    } else {
+      setError(data.error || "Failed to convert JWK to PEM");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="flex flex-col  bg-gray-50">

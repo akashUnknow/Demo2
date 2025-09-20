@@ -18,7 +18,7 @@ export default function ValidateToken() {
   const handleGetPublicKey = async () => {
     setPublicKeyLoading(true)
     try {
-      const res = await fetch("http://localhost:8080/api/public-key", {
+      const res = await fetch("http://localhost:8080/.well-known/jwks.json", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })

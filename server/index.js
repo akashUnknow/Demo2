@@ -1,19 +1,20 @@
 const express = require("express");
 const jwkToPem = require("jwk-to-pem");
 const cors = require("cors");
+const { generateToken } = require("./jwtService");
 
 const app = express();
-
 app.use(express.json());
 
 // Configure CORS
 app.use(
   cors({
-    origin: "https://didactic-capybara-r46g55rq6w7gh57xq-5173.app.github.dev", 
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
   })
 );
+
 
 app.post("/convert", (req, res) => {
   try {
@@ -25,9 +26,24 @@ app.post("/convert", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("JWK to PEM Converter API is running");
+
+app.post("/token", (req, res) => {
+  try {
+    const { username, key } = req.body; 
+    if (!username || !key) {
+      return res.status(400).json({ error: "username and key are required" });
+    }
+
+    const token = generateToken(username, key);
+    res.json({ token });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-const PORT = 8080;
+app.get("/", (req, res) => {
+  res.send("JWK to PEM Converter & JWT API is running");
+});
+
+const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

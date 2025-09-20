@@ -8,6 +8,7 @@ export default function Layout() {
           <Link to="/">Home</Link>
           <Link to="/ValidateToken">ValidateToken</Link>
           <Link to="/convert-jwk">DynamicJwkToPem</Link>
+          <Link to="/generate-token">DynamicTokenGenerator</Link>
         </nav>
       </header>
 
